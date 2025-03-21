@@ -41,10 +41,6 @@ class ZapateriaApp(ctk.CTk):
         self.lista_productos = ctk.CTkTextbox(self, width=600, height=200)
         self.lista_productos.pack(pady=10)
 
-        # 📌 Botón para mostrar stock
-        self.btn_mostrar = ctk.CTkButton(self, text="Mostrar Stock", command=self.mostrar_stock)
-        self.btn_mostrar.pack(pady=10)
-
         # 📌 Campos para registrar ventas
         self.entry_venta_articulo = ctk.CTkEntry(self, placeholder_text="Código del Artículo (Venta)")
         self.entry_venta_articulo.pack(pady=5)
