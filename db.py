@@ -1,70 +1,72 @@
-'''
-ID (primary key                     '1')
-ARTICULO (CODIGO                    'DS45A4') 
-MODELO (TIPO DE CALZADO/ESTILO      'Zapatilla')
-NOMBRE (CALZADO                     'New bilori')
-MARCA (CALZADO                      'Hush puppies')
-TALLE (CALZADO                      '35')
-COLOR (CALZADO                      'Negro')
-STOCK (CANTIDAD                     '25')
-'''
-
 import sqlite3 as sql
 
-# Función para crear la tabla si no existe
+# 📌 Conectar a la base de datos
+def conectar_db():
+    return sql.connect("zapateria.db")
+
+# 📌 Crear la tabla si no existe
 def crear_tabla():
-    conn = sql.connect('zapateria.db')
+    conn = conectar_db()
     cursor = conn.cursor()
-    
+
     cursor.execute(''' 
     CREATE TABLE IF NOT EXISTS calzado (
-        ID INTEGER PRIMARY KEY,
-        ARTICULO TEXT,
-        MODELO TEXT,
-        NOMBRE TEXT,
-        MARCA TEXT,
-        TALLE INTEGER,
-        COLOR TEXT,
-        STOCK INTEGER
+        ID INTEGER PRIMARY KEY AUTOINCREMENT,
+        ARTICULO TEXT UNIQUE NOT NULL,
+        MODELO TEXT NOT NULL,
+        NOMBRE TEXT NOT NULL,
+        MARCA TEXT NOT NULL,
+        TALLE INTEGER NOT NULL,
+        COLOR TEXT NOT NULL,
+        STOCK INTEGER NOT NULL
     )
     ''')
-    
-    # Confirmar los cambios
+
     conn.commit()
     conn.close()
 
-# Función para agregar un nuevo calzado
+# 📌 Agregar un nuevo calzado
 def agregar_calzado(articulo, modelo, nombre, marca, talle, color, stock):
-    conn = sql.connect('zapateria.db')
+    conn = conectar_db()
     cursor = conn.cursor()
-    
-    # Verificar si el calzado ya existe en la base de datos
-    cursor.execute('''SELECT * FROM calzado WHERE ARTICULO = ?''', (articulo,))
-    resultado = cursor.fetchone()
-    
-    # Si no existe, se agrega el calzado, de lo contrario no se hace nada
-    if resultado is None:
+
+    try:
         cursor.execute('''
         INSERT INTO calzado (ARTICULO, MODELO, NOMBRE, MARCA, TALLE, COLOR, STOCK)
         VALUES (?, ?, ?, ?, ?, ?, ?)
         ''', (articulo, modelo, nombre, marca, talle, color, stock))
-        
-        print(f"Calzado {articulo} agregado correctamente.")
-    else:
-        print(f"El calzado {articulo} ya existe en la base de datos.")
-    
-    # Confirmar los cambios
-    conn.commit()
+
+        conn.commit()
+
+    except sql.IntegrityError:
+        print(f"⚠️ El calzado {articulo} ya existe en la base de datos.")
+
     conn.close()
 
-# Crear la tabla si no existe
+# 📌 Obtener todos los productos
+def obtener_productos():
+    conn = conectar_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM calzado")
+    productos = cursor.fetchall()
+    conn.close()
+    return productos
+
+# 📌 Registrar una venta y actualizar el stock
+def vender_calzado(articulo, cantidad):
+    conn = conectar_db()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT STOCK FROM calzado WHERE ARTICULO = ?", (articulo,))
+    stock_actual = cursor.fetchone()
+
+    if stock_actual and stock_actual[0] >= cantidad:
+        cursor.execute("UPDATE calzado SET STOCK = STOCK - ? WHERE ARTICULO = ?", (cantidad, articulo))
+        conn.commit()
+    else:
+        print(f"⚠️ No hay suficiente stock para vender {cantidad} unidades de {articulo}.")
+
+    conn.close()
+
+# 📌 Crear la tabla al iniciar
 crear_tabla()
-
-# Ejemplo de cómo agregar calzado, solo si no existe previamente
-agregar_calzado('DS45B3', 'Bota', 'New walk', 'Nike', 42, 'Azul', 30)
-agregar_calzado('DS45C2', 'Sandalia', 'Summer feet', 'Adidas', 38, 'Rojo', 15)
-agregar_calzado('DS45D1', 'Bota', 'Winter king', 'Puma', 40, 'Negro', 50)
-
-# Intentar agregar un calzado repetido
-agregar_calzado('REJ321', 'Zapatilla', 'New bilori', 'Hush Puppies', 35, 'Negro', 50)
-agregar_calzado('DS45B3', 'Bota', 'New walk', 'Nike', 42, 'Azul', 30)  # Este no se agregará porque ya existe
