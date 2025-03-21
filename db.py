@@ -31,7 +31,7 @@ def agregar_calzado(articulo, modelo, nombre, marca, talle, color, stock):
     cursor = conn.cursor()
 
     try:
-        cursor.execute('''
+        cursor.execute(''' 
         INSERT INTO calzado (ARTICULO, MODELO, NOMBRE, MARCA, TALLE, COLOR, STOCK)
         VALUES (?, ?, ?, ?, ?, ?, ?)
         ''', (articulo, modelo, nombre, marca, talle, color, stock))
@@ -65,6 +65,24 @@ def vender_calzado(articulo, cantidad):
         conn.commit()
     else:
         print(f"⚠️ No hay suficiente stock para vender {cantidad} unidades de {articulo}.")
+
+    conn.close()
+
+# 📌 Eliminar un producto
+def eliminar_calzado(articulo):
+    conn = conectar_db()
+    cursor = conn.cursor()
+
+    # Verificar si el artículo existe antes de eliminarlo
+    cursor.execute("SELECT * FROM calzado WHERE ARTICULO = ?", (articulo,))
+    producto = cursor.fetchone()
+
+    if producto:
+        cursor.execute("DELETE FROM calzado WHERE ARTICULO = ?", (articulo,))
+        conn.commit()
+        print(f"✅ El calzado {articulo} ha sido eliminado.")
+    else:
+        print(f"⚠️ El calzado con código {articulo} no existe.")
 
     conn.close()
 

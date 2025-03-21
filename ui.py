@@ -5,7 +5,7 @@ class ZapateriaApp(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.title("Gestión de Stock - Zapatería")
-        self.geometry("700x500")
+        self.geometry("700x700")  # Ajustamos el tamaño de la ventana para que quepan todos los elementos
 
         # 📌 Título
         self.label_titulo = ctk.CTkLabel(self, text="Gestión de Stock", font=("Arial", 20))
@@ -56,6 +56,15 @@ class ZapateriaApp(ctk.CTk):
         self.btn_vender = ctk.CTkButton(self, text="Registrar Venta", command=self.registrar_venta)
         self.btn_vender.pack(pady=10)
 
+        # 📌 Campos para eliminar productos
+        self.entry_eliminar_articulo = ctk.CTkEntry(self, placeholder_text="Código del Artículo (Eliminar)")
+        self.entry_eliminar_articulo.pack(pady=5)
+
+        # 📌 Botón para eliminar producto
+        self.btn_eliminar = ctk.CTkButton(self, text="Eliminar Producto", command=self.eliminar_producto)
+        self.btn_eliminar.pack(pady=10)
+
+        # Mostrar el stock inicial al iniciar
         self.mostrar_stock()
 
     # 📌 Función para agregar producto
@@ -92,6 +101,16 @@ class ZapateriaApp(ctk.CTk):
             self.mostrar_stock()
         else:
             print("⚠️ Debes ingresar el código del artículo y la cantidad.")
+
+    # 📌 Función para eliminar producto
+    def eliminar_producto(self):
+        articulo = self.entry_eliminar_articulo.get()
+
+        if articulo:
+            db.eliminar_calzado(articulo)
+            self.mostrar_stock()
+        else:
+            print("⚠️ Debes ingresar el código del artículo para eliminar.")
 
 if __name__ == "__main__":
     app = ZapateriaApp()
