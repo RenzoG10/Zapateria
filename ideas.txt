@@ -2,5 +2,11 @@
 
 - Actualizacion de stock
 
--
+- base de datos para registrar ventas
+
+- sacar pdf diarios o mensuales de las ventas y poder ponerle graficos
+
+- registrar proveedor tambien, que dia entraron los productos
+
+- unir la base de datos a la nube para las sucursales, serian 3 db, una para cada sucursal, o poder dividir con filtro de sucursal
 
