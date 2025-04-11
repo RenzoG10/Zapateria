@@ -29,7 +29,19 @@ class ZapateriaApp(ctk.CTk):
 
         self.entry_color = ctk.CTkEntry(self, placeholder_text="Color")
         self.entry_color.pack(pady=5)
+        
+        self.entry_genero = ctk.CTkEntry(self, placeholder_text="Género")
+        self.entry_genero.pack(pady=5)
 
+        self.entry_fecha = ctk.CTkEntry(self, placeholder_text="Fecha")
+        self.entry_fecha.pack(pady=5)
+
+        self.entry_tipo = ctk.CTkEntry(self, placeholder_text="Tipo")
+        self.entry_tipo.pack(pady=5)
+
+        self.entry_precio = ctk.CTkEntry(self, placeholder_text="Precio de Venta")
+        self.entry_precio.pack(pady=5)
+        
         self.entry_stock = ctk.CTkEntry(self, placeholder_text="Stock")
         self.entry_stock.pack(pady=5)
 
@@ -71,10 +83,17 @@ class ZapateriaApp(ctk.CTk):
         marca = self.entry_marca.get()
         talle = self.entry_talle.get()
         color = self.entry_color.get()
+        genero = self.entry_genero.get()
+        fecha = self.entry_fecha.get()
+        tipo = self.entry_tipo.get()
         stock = self.entry_stock.get()
+        precio = self.entry_precio.get()
 
-        if articulo and modelo and nombre and marca and talle and color and stock:
-            db.agregar_calzado(articulo, modelo, nombre, marca, int(talle), color, int(stock))
+        if all([articulo, modelo, nombre, marca, talle, color, genero, fecha, tipo, stock, precio]):
+            db.agregar_calzado(
+                articulo, modelo, nombre, marca, float(talle), color,
+                genero.upper(), fecha, tipo.lower(), int(stock), float(precio)
+            )
             self.mostrar_stock()
         else:
             print("⚠️ Todos los campos son obligatorios.")
@@ -85,7 +104,10 @@ class ZapateriaApp(ctk.CTk):
         self.lista_productos.delete("1.0", "end")
 
         for producto in productos:
-            self.lista_productos.insert("end", f"{producto[1]} - {producto[2]} - {producto[3]} - Stock: {producto[7]}\n")
+            self.lista_productos.insert(
+            "end",
+            f"{producto[1]} | {producto[2]} | {producto[3]} | Talle: {producto[5]} | Stock: {producto[10]} | ${producto[11]:,.0f}\n"
+        )
 
     # 📌 Función para registrar venta
     def registrar_venta(self):

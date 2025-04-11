@@ -16,9 +16,13 @@ def crear_tabla():
         MODELO TEXT NOT NULL,
         NOMBRE TEXT NOT NULL,
         MARCA TEXT NOT NULL,
-        TALLE INTEGER NOT NULL,
+        TALLE REAL NOT NULL,
         COLOR TEXT NOT NULL,
-        STOCK INTEGER NOT NULL
+        GENERO TEXT NOT NULL,
+        FECHA TEXT,
+        TIPO TEXT,
+        STOCK INTEGER NOT NULL,
+        PRECIO_VENTA REAL
     )
     ''')
 
@@ -26,21 +30,18 @@ def crear_tabla():
     conn.close()
 
 # 📌 Agregar un nuevo calzado
-def agregar_calzado(articulo, modelo, nombre, marca, talle, color, stock):
+def agregar_calzado(articulo, modelo, nombre, marca, talle, color, genero, fecha, tipo, stock, precio_venta):
     conn = conectar_db()
     cursor = conn.cursor()
 
     try:
         cursor.execute(''' 
-        INSERT INTO calzado (ARTICULO, MODELO, NOMBRE, MARCA, TALLE, COLOR, STOCK)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-        ''', (articulo, modelo, nombre, marca, talle, color, stock))
-
+        INSERT INTO calzado (ARTICULO, MODELO, NOMBRE, MARCA, TALLE, COLOR, GENERO, FECHA, TIPO, STOCK, PRECIO_VENTA)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (articulo, modelo, nombre, marca, talle, color, genero, fecha, tipo, stock, precio_venta))
         conn.commit()
-
     except sql.IntegrityError:
         print(f"⚠️ El calzado {articulo} ya existe en la base de datos.")
-
     conn.close()
 
 # 📌 Obtener todos los productos
